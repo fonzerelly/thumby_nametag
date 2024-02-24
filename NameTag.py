@@ -4,7 +4,7 @@ import math
 import os
 
 
-name="SONJA"
+name="FONZ"
 
 # Letters adopted from
 # https://fontstruct.com/fontstructions/show/2240527/31khz-futuristic1412
@@ -165,26 +165,67 @@ bitmapZ = bytearray([
     112,120,124,110,103,99,97,97,97,97,97,96,96,96,96,96
 ])
 
-def concatLettersToBitmap(string):
-    return bitmapA
+letterBitmapAssignment = {
+    "A": bitmapA, "B": bitmapB, "C": bitmapC,
+    "D": bitmapD, "E": bitmapE, "F": bitmapF,
+    "G": bitmapG, "H": bitmapH, "I": bitmapI,
+    "J": bitmapJ, "K": bitmapK, "L": bitmapL,
+    "M": bitmapM, "N": bitmapN, "O": bitmapO,
+    "P": bitmapP, "Q": bitmapQ, "R": bitmapR,
+    "S": bitmapS, "T": bitmapT, "U": bitmapU,
+    "V": bitmapV, "W": bitmapW, "X": bitmapX,
+    "Y": bitmapY, "Z": bitmapZ
+}
+
+def concatLettersToBitmap(name):
+    name_list=list(name)
+    bitmap_list = [letterBitmapAssignment[letter] for letter in name_list]
+    bitmap_list_lists = [list(bl) for bl in bitmap_list]
+    first_rows = [bl[0:16] for bl in bitmap_list_lists]
+    second_rows = [bl[16:32] for bl in bitmap_list_lists]
+
+    result = []
+    for first_row in first_rows:
+        result.extend(first_row)
+    for second_row in second_rows:
+        result.extend(second_row)
+
+    return result
 
 mode = "thumby"
 if (hasattr(os, "getenv")):
     mode = os.getenv("THMB_MODE")
 
-def thumby():
+def thumby_mode():
     print("RUNNING THUMBY")
+    print("Display \""+name+"\" as "+str(len(name)*16)+"x16 bitmap")
+    bitmap0 = bytearray(concatLettersToBitmap(name))
+
+    thumbySprite = thumby.Sprite(len(name)*16, 16, bitmap0)
+
+    # Set the FPS (without this call, the default fps is 30)
+    thumby.display.setFPS(60)
+
+    while(1):
+        thumby.display.fill(0)
+        thumbySprite.x = 0
+        thumbySprite.y = int(round((thumby.display.height/2) - (16/2)))
+
+        thumby.display.drawSprite(thumbySprite)
+        thumby.display.update()
+
     return
 
-def pc():
+def pc_mode():
     print("RUNNING PC")
+    print(list(concatLettersToBitmap(name)))
     return
 
 def main():
     if (mode == "thumby"):
-        thumby()
+        thumby_mode()
         return
     else:
-        pc()
+        pc_mode()
 
 main()
