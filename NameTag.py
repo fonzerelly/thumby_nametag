@@ -59,8 +59,8 @@ bitmapH = bytearray([
 
 # BITMAP: width: 16, height: 16
 bitmapI = bytearray([
-    0,0,0,0,0,0,0,254,254,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,127,127,0,0,0,0,0,0,0
+    6,6,6,6,6,6,6,254,254,6,6,6,6,6,6,6,
+    96,96,96,96,96,96,96,127,127,96,96,96,96,96,96,96
 ])
           
 # BITMAP: width: 16, height: 16
@@ -187,8 +187,10 @@ def concatLettersToBitmap(name):
     result = []
     for first_row in first_rows:
         result.extend(first_row)
+        result.extend([0])
     for second_row in second_rows:
         result.extend(second_row)
+        result.extend([0])
 
     return result
 
@@ -198,10 +200,11 @@ if (hasattr(os, "getenv")):
 
 def thumby_mode():
     print("RUNNING THUMBY")
-    print("Display \""+name+"\" as "+str(len(name)*16)+"x16 bitmap")
+    gap = len(name)*1
+    print("Display \""+name+"\" as "+str(len(name)*16+gap)+"x16 bitmap")
     bitmap0 = bytearray(concatLettersToBitmap(name))
 
-    thumbySprite = thumby.Sprite(len(name)*16, 16, bitmap0)
+    thumbySprite = thumby.Sprite(int(len(list(bitmap0))/2), 16, bitmap0)
 
     # Set the FPS (without this call, the default fps is 30)
     thumby.display.setFPS(60)
@@ -218,7 +221,9 @@ def thumby_mode():
 
 def pc_mode():
     print("RUNNING PC")
-    print(list(concatLettersToBitmap(name)))
+    concatenatedBitmap = concatLettersToBitmap(name)
+    print(list(concatenatedBitmap))
+    print(len(concatenatedBitmap))
     return
 
 def main():
