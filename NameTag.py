@@ -194,6 +194,18 @@ def concatLettersToBitmap(name):
 
     return result
 
+class Scroller:
+    def __init__(self, tickFn, ticks_per_letter=30):
+        self.tickFn = tickFn
+        self.initTime = tickFn()
+        self.velocity = 1/ticks_per_letter
+
+    def scroll(self, sprite):
+        relativeTick = self.tickFn() - self.initTime
+        sprite.x = (thumby.display.width+1) - math.floor(relativeTick*self.velocity)
+        if sprite.x < (sprite.width * -1):
+            return True
+
 mode = "thumby"
 if (hasattr(os, "getenv")):
     mode = os.getenv("THMB_MODE")
@@ -208,11 +220,14 @@ def thumby_mode():
 
     # Set the FPS (without this call, the default fps is 30)
     thumby.display.setFPS(60)
+    scroller = Scroller(time.ticks_ms, 27)
 
     while(1):
         thumby.display.fill(0)
-        thumbySprite.x = 0
+        #thumbySprite.x = 0
         thumbySprite.y = int(round((thumby.display.height/2) - (16/2)))
+        if scroller.scroll(thumbySprite):
+            break
 
         thumby.display.drawSprite(thumbySprite)
         thumby.display.update()
