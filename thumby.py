@@ -3,6 +3,9 @@ class Display:
     self.width = 72
     self.height = 40
 
+  def drawSprite(self, sprite):
+    None
+
 display = Display()
 
 class Sprite:

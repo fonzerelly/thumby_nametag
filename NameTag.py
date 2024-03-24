@@ -200,11 +200,18 @@ class Scroller:
         self.initTime = tickFn()
         self.velocity = 1/ticks_per_letter
 
-    def scroll(self, sprite):
+    def scroll(self, sprites):
         relativeTick = self.tickFn() - self.initTime
-        sprite.x = (thumby.display.width+1) - math.floor(relativeTick*self.velocity)
-        if sprite.x < (sprite.width * -1):
-            return True
+        distance = 0
+        for i in range(len(sprites)):
+            sprite = sprites[i]
+            sprite.x = (thumby.display.width+1) - math.floor(relativeTick*self.velocity) + distance
+            distance = distance + sprite.width
+            isLastSprite = (i == (len(sprites)-1))
+            spriteLeavesScreenLeft = (sprite.x < (sprite.width * -1))
+            thumby.display.drawSprite(sprite)
+            if isLastSprite and spriteLeavesScreenLeft:
+                return True
 
 mode = "thumby"
 if (hasattr(os, "getenv")):
@@ -226,19 +233,15 @@ def thumby_mode():
         thumby.display.fill(0)
         #thumbySprite.x = 0
         thumbySprite.y = int(round((thumby.display.height/2) - (16/2)))
-        if scroller.scroll(thumbySprite):
+        if scroller.scroll([thumbySprite]):
             break
 
-        thumby.display.drawSprite(thumbySprite)
         thumby.display.update()
 
     return
 
 def pc_mode():
     print("RUNNING PC")
-    concatenatedBitmap = concatLettersToBitmap(name)
-    print(list(concatenatedBitmap))
-    print(len(concatenatedBitmap))
     return
 
 def main():
