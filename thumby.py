@@ -14,5 +14,6 @@ class Sprite:
     self.y = y
     self.width = width
     self.height = height
+    self.bitmap = bitmapData
 
   

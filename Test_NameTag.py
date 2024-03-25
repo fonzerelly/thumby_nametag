@@ -127,7 +127,58 @@ class TestScroller(unittest.TestCase):
         mock_draw_sprite.assert_any_call(sprites[0])
         mock_draw_sprite.assert_any_call(sprites[1])
 
+class TestCreate16BitSprite(unittest.TestCase):
+    square = [
+        255,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1, 255,
+        255, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 255
+    ]
 
+    half_square = [
+        255,   1,   1,   1,   1,   1,   1,   1,
+        255, 128, 128, 128, 128, 128, 128, 128
+    ]
+
+    def test_that_it_creates_bitmap_of_size_8x16 (self):
+        result = NameTag.create16BitSprite(self.square)
+        self.assertEqual(result.width, 16)
+        self.assertEqual(result.height, 16)
+        self.assertEqual(result.x, 0)
+        self.assertEqual(result.y, 0)
+
+    def test_that_it_creates_bitmap_of_size_8x16 (self):
+        result = NameTag.create16BitSprite(self.half_square)
+        self.assertEqual(result.width, 8)
+        self.assertEqual(result.height, 16)
+
+    def test_that_it_stores_pixels_as_bytearray (self):
+        result = NameTag.create16BitSprite(self.square)
+        self.assertTrue(isinstance(result.bitmap, bytearray))
+        self.assertEqual(list(result.bitmap), self.square)
+
+    def test_that_it_works_with_bytearray_as_well (self):
+        bytearray_input = bytearray(self.square)
+        result = NameTag.create16BitSprite(bytearray_input)
+        self.assertTrue(result.bitmap, bytearray_input)
+
+
+class TestSliceBitmap(unittest.TestCase):
+    half_square = [
+        255,   1,   1,   1,   1,   1,   1,   1,
+        255, 128, 128, 128, 128, 128, 128, 128
+    ]
+    def test_that_it_turns_a_sprite_into_width_vertical_slices(self):
+        slices = NameTag.sliceBitmap(self.half_square)
+        self.assertEqual(len(slices), 8)
+        for sprite in slices:
+            self.assertEqual(len(sprite.bitmap), 2)
+
+    def test_that_each_slice_contains_16_bits_of_each_column(self):
+        verticalBar = NameTag.create16BitSprite([255,255])
+        horizontalSegment = NameTag.create16BitSprite([1, 128])
+        slices = NameTag.sliceBitmap(self.half_square)
+        self.assertEqual(slices[0].bitmap, verticalBar.bitmap)
+        for slice in slices[1:]:
+            self.assertEqual(slice.bitmap, horizontalSegment.bitmap)
 
 if __name__=="__main__":
     unittest.main()

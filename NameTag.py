@@ -194,6 +194,20 @@ def concatLettersToBitmap(name):
 
     return result
 
+def half_len(lst):
+    return int(len(lst)/2)
+
+def create16BitSprite(pixels):
+    width = half_len(pixels)
+    return thumby.Sprite(width, 16, bytearray(pixels), 0, 0)
+
+def sliceBitmap(pixels):
+    result = []
+    half = half_len(pixels)
+    for i in range(half):
+        result.append(create16BitSprite([pixels[i], pixels[i+half]]))
+    return result
+
 class Scroller:
     def __init__(self, tickFn, ticks_per_letter=30):
         self.tickFn = tickFn
