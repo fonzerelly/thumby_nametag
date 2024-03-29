@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 import NameTag
 import thumby
 
@@ -61,6 +61,7 @@ class TestScroller(unittest.TestCase):
 
         return iterator
 
+
     def test_that_it_positions_the_sprite_on_the_far_right_of_the_display_based_on_tick(self):
         uut = NameTag.Scroller(self.create_iterator([1000, 1001]))
         sprites = [thumby.Sprite(16,16,bytearray([]),0,0)]
@@ -83,6 +84,19 @@ class TestScroller(unittest.TestCase):
         uut.scroll(sprites)
         self.assertEqual(sprites[0].x + sprites[0].width, sprites[1].x)
         self.assertEqual(sprites[1].x + sprites[1].width, sprites[2].x)
+
+    def test_that_it_positions_vertically_by_passed_in_fn(self):
+        mock = Mock()
+        mock.vertical_positioning.return_value = None
+        uut = NameTag.Scroller(self.create_iterator([1000, 1027]), 27, lambda t, i, h:  mock.vertical_positioning(t, i, h))
+        sprites = [
+            NameTag.create16BitSprite([
+                255,   1,   1,   1, 255,
+                255, 128, 128, 128, 255
+            ])
+        ]
+        uut.scroll(sprites)
+        mock.vertical_positioning.assert_called_with(27, 0, 16)
 
 
     def test_that_it_returns_false_as_long_as_sprite_has_not_left_screen(self):
@@ -179,6 +193,7 @@ class TestSliceBitmap(unittest.TestCase):
         self.assertEqual(slices[0].bitmap, verticalBar.bitmap)
         for slice in slices[1:]:
             self.assertEqual(slice.bitmap, horizontalSegment.bitmap)
+
 
 if __name__=="__main__":
     unittest.main()

@@ -209,10 +209,11 @@ def sliceBitmap(pixels):
     return result
 
 class Scroller:
-    def __init__(self, tickFn, ticks_per_letter=30):
+    def __init__(self, tickFn, ticks_per_letter=30, vertical_positioning=lambda t, i, h: 0):
         self.tickFn = tickFn
         self.initTime = tickFn()
         self.velocity = 1/ticks_per_letter
+        self.vertical_positioning = vertical_positioning
 
     def scroll(self, sprites):
         relativeTick = self.tickFn() - self.initTime
@@ -220,12 +221,14 @@ class Scroller:
         for i in range(len(sprites)):
             sprite = sprites[i]
             sprite.x = (thumby.display.width+1) - math.floor(relativeTick*self.velocity) + distance
+            sprite.y = self.vertical_positioning(relativeTick, i, sprite.height)
             distance = distance + sprite.width
             isLastSprite = (i == (len(sprites)-1))
             spriteLeavesScreenLeft = (sprite.x < (sprite.width * -1))
             thumby.display.drawSprite(sprite)
             if isLastSprite and spriteLeavesScreenLeft:
                 return True
+
 
 mode = "thumby"
 if (hasattr(os, "getenv")):
