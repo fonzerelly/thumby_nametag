@@ -165,6 +165,11 @@ bitmapZ = bytearray([
     112,120,124,110,103,99,97,97,97,97,97,96,96,96,96,96
 ])
 
+bitmapHeart = bytearray([
+    0,248,4,2,2,4,4,8,8,4,4,114,114,4,248,0,
+    0,0,3,4,8,16,32,64,64,32,16,8,4,3,0,0
+])
+
 letterBitmapAssignment = {
     "A": bitmapA, "B": bitmapB, "C": bitmapC,
     "D": bitmapD, "E": bitmapE, "F": bitmapF,
@@ -174,7 +179,7 @@ letterBitmapAssignment = {
     "P": bitmapP, "Q": bitmapQ, "R": bitmapR,
     "S": bitmapS, "T": bitmapT, "U": bitmapU,
     "V": bitmapV, "W": bitmapW, "X": bitmapX,
-    "Y": bitmapY, "Z": bitmapZ
+    "Y": bitmapY, "Z": bitmapZ, "h": bitmapHeart
 }
 
 def concatLettersToBitmap(name):
