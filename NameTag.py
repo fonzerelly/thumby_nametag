@@ -230,6 +230,19 @@ class Scroller:
                 return True
 
 
+def wave(tick, i, height):
+
+    t0 = tick+i*10
+
+    bobRate = 250 # Set arbitrary bob rate (higher is slower)
+    bobRange = (height)/2  # How many pixels to move the sprite up/down (-5px ~ 5px)
+
+    # Calculate number of pixels to offset sprite for bob animation
+    bobOffset = math.sin(t0 / bobRate) * bobRange
+    return int(round((thumby.display.height/2) - (height/2) + bobOffset))
+
+
+
 mode = "thumby"
 if (hasattr(os, "getenv")):
     mode = os.getenv("THMB_MODE")
@@ -240,17 +253,15 @@ def thumby_mode():
     print("Display \""+name+"\" as "+str(len(name)*16+gap)+"x16 bitmap")
     bitmap0 = bytearray(concatLettersToBitmap(name))
 
-    thumbySprite = thumby.Sprite(int(len(list(bitmap0))/2), 16, bitmap0)
+    thumbySprites = sliceBitmap(bitmap0)
 
     # Set the FPS (without this call, the default fps is 30)
     thumby.display.setFPS(60)
-    scroller = Scroller(time.ticks_ms, 27)
+    scroller = Scroller(time.ticks_ms, 27, wave)
 
     while(1):
         thumby.display.fill(0)
-        #thumbySprite.x = 0
-        thumbySprite.y = int(round((thumby.display.height/2) - (16/2)))
-        if scroller.scroll([thumbySprite]):
+        if scroller.scroll(thumbySprites):
             break
 
         thumby.display.update()
